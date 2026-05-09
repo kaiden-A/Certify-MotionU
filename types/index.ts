@@ -8,7 +8,7 @@ export interface CertificateConfig {
 
 export interface GeneratePayload {
   names: string[];
-  templateUri: string;
+  templateName: string;
   config?: CertificateConfig;
 }
 

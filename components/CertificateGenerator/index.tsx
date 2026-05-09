@@ -7,21 +7,30 @@ import FileDropZone from './FileDropZone';
 import CloudinarySection from './CloudinarySection';
 import ActionBar from './ActionBar';
 
-const CLOUDINARY_CLOUD_NAME = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME! ;
-const CLOUDINARY_UPLOAD_PRESET = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET! ;
-const GENERATE_API_URL = process.env.NEXT_PUBLIC_GENERATE_API_URL! ;
+// ── Environment Config ────────────────────────────────────────
+const CLOUDINARY_CLOUD_NAME = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME!;
+const CLOUDINARY_UPLOAD_PRESET = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET!;
+const GENERATE_API_URL = process.env.NEXT_PUBLIC_GENERATE_API_URL!;
 
 export default function CertificateGenerator() {
+  // File states
   const [csvFile, setCsvFile] = useState<FileState>({ file: null, name: '' });
   const [pngFile, setPngFile] = useState<FileState>({ file: null, name: '' });
+  
+  // Data states
   const [parsedNames, setParsedNames] = useState<string[]>([]);
-  const [templateUrl, setTemplateUrl] = useState<string | null>(null);
+  
+  // 🔁 Changed: template name instead of full URL
+  const [templateName, setTemplateName] = useState<string | null>(null);
   const [templateConfig, setTemplateConfig] = useState<CertificateConfig | null>(null);
+  
+  // UI states
   const [cldStatus, setCldStatus] = useState<CloudinaryStatus>('idle');
   const [status, setStatus] = useState('Upload both files to continue.');
   const [statusType, setStatusType] = useState<'' | 'error' | 'success'>('');
   const [isProcessing, setIsProcessing] = useState(false);
 
+  // ── CSV Handler ─────────────────────────────────────────────
   const handleCsvSelect = useCallback(async (file: File) => {
     try {
       const text = await file.text();
@@ -44,20 +53,24 @@ export default function CertificateGenerator() {
     }
   }, []);
 
+  // ── PNG Handler ─────────────────────────────────────────────
   const handlePngSelect = useCallback((file: File) => {
     setPngFile({ file, name: file.name });
     setCldStatus('idle');
-    setTemplateUrl(null);
+    // 🔁 Reset template name instead of URL
+    setTemplateName(null);
     setTemplateConfig(null);
     updateStatus();
   }, []);
 
-  const handleTemplateReady = useCallback((url: string, config: CertificateConfig) => {
-    setTemplateUrl(url);
+  // ── Template Ready Handler (receives NAME, not URL) ─────────
+  const handleTemplateReady = useCallback((name: string, config: CertificateConfig) => {
+    setTemplateName(name);
     setTemplateConfig(config);
     updateStatus();
   }, []);
 
+  // ── Cloudinary Status Handler ───────────────────────────────
   const handleCldStatusChange = useCallback((status: CloudinaryStatus, message: string) => {
     setCldStatus(status);
     if (status === 'failed') {
@@ -66,10 +79,12 @@ export default function CertificateGenerator() {
     }
   }, []);
 
+  // ── Status Updater ──────────────────────────────────────────
   const updateStatus = useCallback(() => {
     const hasCsv = parsedNames.length > 0;
     const hasPng = !!pngFile.file;
-    const cloudinaryReady = cldStatus === 'done' && templateUrl;
+    // 🔁 Check for templateName instead of templateUrl
+    const cloudinaryReady = cldStatus === 'done' && templateName;
 
     if (!hasCsv && !hasPng) {
       setStatus('Upload both files to continue.');
@@ -83,24 +98,32 @@ export default function CertificateGenerator() {
       setStatus(`Ready — ${parsedNames.length} names loaded. Click Generate.`);
       setStatusType('');
     }
-  }, [parsedNames.length, pngFile.file, cldStatus, templateUrl]);
+  }, [parsedNames.length, pngFile.file, cldStatus, templateName]);
 
-  const isReady = parsedNames.length > 0 && pngFile.file && cldStatus === 'done' && templateUrl;
+  // ── Ready Check ─────────────────────────────────────────────
+  // 🔁 Check for templateName
+  const isReady = parsedNames.length > 0 && pngFile.file && cldStatus === 'done' && templateName;
 
+  // ── Generate Handler ────────────────────────────────────────
   const handleGenerate = async () => {
-    if (!isReady || !templateUrl || !templateConfig) return;
+    // 🔁 Check for templateName
+    if (!isReady || !templateName || !templateConfig) return;
 
     setIsProcessing(true);
     setStatus('Generating certificates…');
     setStatusType('');
 
+
     const payload: GeneratePayload = {
       names: parsedNames,
-      templateUri: templateUrl,
+      templateName : templateName, // Send the reconstructed URL to your backend
       config: templateConfig,
     };
 
     try {
+
+      console.log(payload);
+
       const res = await fetch(GENERATE_API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -146,7 +169,7 @@ export default function CertificateGenerator() {
         <p className="tagline">Upload a CSV and a template. Download a ZIP.</p>
       </header>
 
-      <div className="cards" >
+      <div className="cards">
         {/* CSV Drop Zone */}
         <FileDropZone
           accept=".csv"

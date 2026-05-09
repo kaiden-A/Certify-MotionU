@@ -8,7 +8,8 @@ import { slugify } from '@/lib/utils';
 interface CloudinarySectionProps {
   cloudName: string;
   uploadPreset: string;
-  onTemplateReady: (url: string, config: CertificateConfig) => void;
+  // 🔁 Changed: now returns templateName instead of URL
+  onTemplateReady: (templateName: string, config: CertificateConfig) => void;
   onStatusChange: (status: CloudinaryStatus, message: string) => void;
   templateFile: File | null;
 }
@@ -31,9 +32,10 @@ export default function CloudinarySection({
   const [templateName, setTemplateName] = useState('');
   const [cldStatus, setCldStatus] = useState<CloudinaryStatus>('idle');
   const [cldMessage, setCldMessage] = useState('');
-  const [uploadedUrl, setUploadedUrl] = useState<string | null>(null);
+  const [confirmedTemplateName, setConfirmedTemplateName] = useState<string | null>(null);
   const [config, setConfig] = useState<CertificateConfig>(DEFAULT_CONFIG);
 
+  // Auto-fill template name when file is selected
   useEffect(() => {
     if (templateFile && !templateName) {
       setTemplateName(slugify(templateFile.name));
@@ -41,11 +43,12 @@ export default function CloudinarySection({
   }, [templateFile, templateName]);
 
   const handleUpload = async () => {
-    if (!templateName.trim() || !templateFile) return;
+    const cleanName = templateName.trim();
+    if (!cleanName || !templateFile) return;
 
     const url = await uploadToCloudinary({
       file: templateFile,
-      publicId: templateName.trim(),
+      publicId: cleanName,
       cloudName,
       uploadPreset,
       onStatusChange: (status, message) => {
@@ -55,21 +58,24 @@ export default function CloudinarySection({
       },
     });
 
+    // If upload succeeded (url is returned), pass ONLY the template name upward
     if (url) {
-      setUploadedUrl(url);
-      onTemplateReady(url, config);
+      setConfirmedTemplateName(cleanName);
+      onTemplateReady(cleanName, config);
     }
   };
 
   const handleConfigChange = (key: keyof CertificateConfig, value: string | number) => {
     const newConfig = { ...config, [key]: value };
     setConfig(newConfig);
-    if (uploadedUrl) {
-      onTemplateReady(uploadedUrl, newConfig);
+    
+    // Propagate config changes to parent only if template is already confirmed
+    if (confirmedTemplateName) {
+      onTemplateReady(confirmedTemplateName, newConfig);
     }
   };
 
-  const isReady = cldStatus === 'done' && uploadedUrl;
+  const isReady = cldStatus === 'done' && confirmedTemplateName;
 
   return (
     <div className="tns visible">
@@ -121,9 +127,9 @@ export default function CloudinarySection({
         </div>
       )}
 
-      {uploadedUrl && (
+      {confirmedTemplateName && (
         <div className="url-preview visible">
-          <strong>{uploadedUrl}</strong>
+          <strong>Template: {confirmedTemplateName}</strong>
         </div>
       )}
 
@@ -133,58 +139,28 @@ export default function CloudinarySection({
         <div className="config-grid">
           <div className="config-field">
             <label className="config-label">X Position</label>
-            <input 
-              className="config-input" 
-              type="number" 
-              value={config.x}
-              min={0}
-              onChange={(e) => handleConfigChange('x', parseInt(e.target.value) || 0)}
-            />
+            <input className="config-input" type="number" value={config.x} min={0} onChange={(e) => handleConfigChange('x', parseInt(e.target.value) || 0)} />
           </div>
           <div className="config-field">
             <label className="config-label">Y Position</label>
-            <input 
-              className="config-input" 
-              type="number" 
-              value={config.y}
-              min={0}
-              onChange={(e) => handleConfigChange('y', parseInt(e.target.value) || 0)}
-            />
+            <input className="config-input" type="number" value={config.y} min={0} onChange={(e) => handleConfigChange('y', parseInt(e.target.value) || 0)} />
           </div>
           <div className="config-field">
             <label className="config-label">Font Size</label>
-            <input 
-              className="config-input" 
-              type="number" 
-              value={config.fontSize}
-              min={8} 
-              max={200}
-              onChange={(e) => handleConfigChange('fontSize', parseInt(e.target.value) || 8)}
-            />
+            <input className="config-input" type="number" value={config.fontSize} min={8} max={200} onChange={(e) => handleConfigChange('fontSize', parseInt(e.target.value) || 8)} />
           </div>
           <div className="config-field">
             <label className="config-label">Color</label>
-            <input 
-              className="config-input" 
-              type="color" 
-              value={config.color}
-              onChange={(e) => handleConfigChange('color', e.target.value)}
-            />
+            <input className="config-input" type="color" value={config.color} onChange={(e) => handleConfigChange('color', e.target.value)} />
           </div>
           <div className="config-field full">
             <label className="config-label">Font Family</label>
-            <input 
-              className="config-input" 
-              type="text" 
-              value={config.fontFamily}
-              placeholder="e.g., PTSerif, Arial, Times New Roman"
-              onChange={(e) => handleConfigChange('fontFamily', e.target.value)}
-            />
+            <input className="config-input" type="text" value={config.fontFamily} placeholder="e.g., PTSerif, Arial, Times New Roman" onChange={(e) => handleConfigChange('fontFamily', e.target.value)} />
           </div>
         </div>
       </div>
 
-      {isReady && <input type="hidden" value={uploadedUrl} data-ready="true" />}
+      {isReady && <input type="hidden" value={confirmedTemplateName} data-ready="true" />}
     </div>
   );
 }
