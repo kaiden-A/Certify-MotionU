@@ -17,6 +17,9 @@ export async function uploadToCloudinary({
 }: UploadToCloudinaryOptions): Promise<string | null> {
   try {
     onStatusChange?.('uploading', 'Uploading to Cloudinary…');
+
+    console.log("Using Preset:", uploadPreset);
+    console.log("Cloud Name:", cloudName);
     
     const fd = new FormData();
     fd.append('file', file);
