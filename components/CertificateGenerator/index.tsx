@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useCallback } from 'react';
+import Link from 'next/link';
 import { parseCSV } from '@/lib/utils';
 import { FileState, CertificateConfig, CloudinaryStatus, GeneratePayload } from '@/types';
 import FileDropZone from './FileDropZone';
@@ -159,6 +160,14 @@ export default function CertificateGenerator() {
 
   return (
     <div className="wrapper">
+      <Link href="/" className="cert-back">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12" />
+          <polyline points="12 19 5 12 12 5" />
+        </svg>
+        Home
+      </Link>
+
       <header className="header">
         <div className="eyebrow">
           <span className="eyebrow-line" />
