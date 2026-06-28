@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { Cormorant_Garamond, DM_Mono, Syne } from 'next/font/google';
+import { Cormorant_Garamond, DM_Mono, PT_Serif, Syne } from 'next/font/google';
 import './globals.css';
 
 // ── Font Optimization (Next.js) ──────────────────────────────
@@ -15,6 +15,13 @@ const dmMono = DM_Mono({
   subsets: ['latin'],
   weight: ['400', '500'],
   variable: '--font-dm-mono',
+  display: 'swap',
+});
+
+const ptSerif = PT_Serif({
+  subsets: ['latin'],
+  weight: ['400', '700'],
+  variable: '--font-pt-serif',
   display: 'swap',
 });
 
@@ -45,7 +52,7 @@ export default function RootLayout({
   return (
     <html 
       lang="en" 
-      className={`${cormorant.variable} ${dmMono.variable} ${syne.variable}`}
+      className={`${cormorant.variable} ${dmMono.variable} ${ptSerif.variable} ${syne.variable}`}
     suppressHydrationWarning>
       <body>
         {/* Optional: Add a background wrapper if needed */}

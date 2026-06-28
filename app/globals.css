@@ -1123,6 +1123,239 @@ body::after {
   letter-spacing: 0.06em;
 }
 
+/* ── 18. Certificate Preview ─────────────────────────────────── */
+.preview-section {
+  margin-bottom: 14px;
+  animation: fadeUp 0.6s 0.12s ease both;
+}
+
+.preview-section .tns-label {
+  font-family: var(--font-dm-mono), monospace;
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-bottom: 8px;
+  display: block;
+}
+
+.preview-empty {
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 2.5rem 1.5rem;
+  text-align: center;
+  color: var(--ink-faint);
+  font-family: var(--font-dm-mono), monospace;
+  font-size: 11px;
+}
+
+.preview-empty svg {
+  width: 32px;
+  height: 32px;
+  stroke: var(--ink-faint);
+  fill: none;
+  stroke-width: 1.25;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  margin-bottom: 0.75rem;
+}
+
+.preview-canvas-wrap {
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  max-width: 100%;
+}
+
+.preview-canvas {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  cursor: crosshair;
+  transition: cursor 0.15s;
+}
+
+.preview-canvas.dragging {
+  cursor: grabbing;
+}
+
+.preview-hint {
+  font-family: var(--font-dm-mono), monospace;
+  font-size: 10px;
+  color: var(--ink-faint);
+  text-align: center;
+  margin-top: 6px;
+  margin-bottom: 0;
+}
+
+.config-select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%236B6560'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  padding-right: 28px;
+}
+
+.save-config-btn {
+  margin-top: 10px;
+  border-color: var(--gold) !important;
+  color: var(--gold-dark) !important;
+  font-weight: 500;
+}
+
+.save-config-btn:hover:not(:disabled) {
+  background: var(--gold-light) !important;
+  border-color: var(--gold-dark) !important;
+}
+
+/* ── 19. Config List ─────────────────────────────────────────── */
+.config-list-section {
+  margin-bottom: 14px;
+  animation: fadeUp 0.6s 0.16s ease both;
+}
+
+.config-list-section .tns-label {
+  font-family: var(--font-dm-mono), monospace;
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-bottom: 8px;
+  display: block;
+}
+
+.config-list-empty {
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  text-align: center;
+  font-family: var(--font-dm-mono), monospace;
+  font-size: 11px;
+  color: var(--ink-muted);
+}
+
+.config-list-empty-hint {
+  font-size: 10px;
+  color: var(--ink-faint);
+  margin-top: 4px;
+}
+
+.config-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.config-list-item {
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  transition: border-color 0.2s;
+}
+
+.config-list-item:hover {
+  border-color: var(--border-strong);
+}
+
+.config-list-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
+}
+
+.config-list-name {
+  font-family: var(--font-syne), sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.config-list-meta {
+  font-family: var(--font-dm-mono), monospace;
+  font-size: 9px;
+  color: var(--ink-faint);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.config-list-swatch {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  border: 0.5px solid var(--border-strong);
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+
+.config-list-date {
+  font-family: var(--font-dm-mono), monospace;
+  font-size: 8px;
+  color: var(--ink-faint);
+  opacity: 0.6;
+}
+
+.config-list-actions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.config-list-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 26px;
+  padding: 0 10px;
+  border: 0.5px solid var(--border-strong);
+  border-radius: var(--radius);
+  background: transparent;
+  font-family: var(--font-dm-mono), monospace;
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  color: var(--ink-muted);
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s, color 0.2s;
+  white-space: nowrap;
+}
+
+.config-list-btn:hover {
+  border-color: var(--gold);
+}
+
+.config-list-btn.load:hover {
+  color: var(--gold-dark);
+  background: var(--gold-light);
+}
+
+.config-list-btn.delete:hover {
+  color: var(--error);
+  background: rgba(163,48,48,0.08);
+  border-color: var(--error);
+}
+
+.config-list-btn svg {
+  stroke: currentColor;
+  fill: none;
+  flex-shrink: 0;
+}
+
 /* ── 16. Animations ──────────────────────────────────────────── */
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(16px); }
@@ -1158,4 +1391,8 @@ body::after {
   .lp-steps-grid { grid-template-columns: 1fr; }
   .lp-preview-controls { order: 2; }
   .lp-certificate { order: 1; }
+
+  .config-list-item { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .config-list-actions { width: 100%; }
+  .config-list-btn { flex: 1; justify-content: center; }
 }
